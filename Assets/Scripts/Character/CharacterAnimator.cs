@@ -31,6 +31,8 @@ public class CharacterAnimator : MonoBehaviour
 
     public void ChangeAnimation(CharacterAnimationState state)
     {
+        if (state == CharacterAnimationState.Mine) 
+            Debug.Log("test");
         if (currentCharacterAnimation.characterAnimationState != state)
         {
             currentCharacterAnimation = GetCharacterAnimation(state);
@@ -70,23 +72,31 @@ public class CharacterAnimator : MonoBehaviour
 
     public void GetAnimationFromVector2(float x, float y)
     {
-        string lrrl = "WalkLR";
+        CharacterAnimationState state = CharacterAnimationState.WalkLR;
         if (x == 0 && y != 0)
         {
-            ChangeAnimation("WalkUD");
+            if ((y > 0))
+                ChangeAnimation(CharacterAnimationState.WalkDU);
+            else
+                ChangeAnimation(CharacterAnimationState.WalkUD);
             return;
         }
 
         if (x < 0)
         {
             x *= -1;
-            lrrl = "WalkRL";
+            state = CharacterAnimationState.WalkRL;
         }
 
         if (y > x || (y < 0 && y + x < 0))
-            ChangeAnimation("WalkUD");
+        {
+            if ((y > 0))
+                ChangeAnimation(CharacterAnimationState.WalkDU);
+            else
+                ChangeAnimation(CharacterAnimationState.WalkUD);
+        }
         else
-            ChangeAnimation(lrrl);
+            ChangeAnimation(state);
     }
 
     private CharacterAnimation GetCharacterAnimation(string name)

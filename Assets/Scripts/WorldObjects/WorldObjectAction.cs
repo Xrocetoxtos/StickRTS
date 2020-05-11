@@ -28,8 +28,10 @@ public class WorldObjectAction : ScriptableObject
         return player.ActionAvailable(this);
     }
 
-    public void Perform()
+    public void Perform(Player player)
     {
+        if (!EnoughResources(player))
+            return;
 
         switch (actionType)
         {
@@ -45,6 +47,14 @@ public class WorldObjectAction : ScriptableObject
             default:
                 break;
         }
+    }
+
+    private bool EnoughResources(Player player)
+    {
+        return player.GetResource(ResourceType.Wood) >= wood &&
+            player.GetResource(ResourceType.Food) >= food &&
+            player.GetResource(ResourceType.Gold) >= gold &&
+            player.GetResource(ResourceType.Stone) >= stone;
     }
 
     private void Science()

@@ -8,7 +8,7 @@ public class Path
     public readonly int finishLineIndex;
     public readonly int slowDownIndex;
 
-    public Path(Vector3[] waypoints, Vector2 startPosition, float turnDistance, float stoppingDistance)
+    public Path(Vector3[] waypoints, Vector2 startPosition, float stoppingDistance)
     {
         lookPoints = waypoints;
 
@@ -17,8 +17,6 @@ public class Path
         {
             Vector2 currentPoint = lookPoints[i];
             Vector2 directionToCurrentPoint = (currentPoint - previousPoint).normalized;
-            Vector2 turnBoundaryPoint = (i == finishLineIndex) ? currentPoint : currentPoint - directionToCurrentPoint * turnDistance;
-            previousPoint = turnBoundaryPoint;
         }
 
         float distanceFromEndPoint = 0;

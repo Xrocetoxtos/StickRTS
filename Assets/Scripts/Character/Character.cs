@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 public class Character : WorldObject
@@ -9,27 +10,37 @@ public class Character : WorldObject
     [SerializeField] private Transform targetDummy;
 
     const float minPathUpdateTime = .2f;
-    const float pathUpdateMoveThreshold=.5f;
-    
-    public Transform target;
+    const float pathUpdateMoveThreshold = .5f;
+
+    public Transform targetPosition;
+    public WorldObject actualTarget;
+    public WorldObject returnTarget;
+    public Animator animator;
+
     public float speed = 20f;
     public float turnDistance = 5f;
-    public float turnSpeed = 3f;
     public float stoppingDistance = 10f;
+    public float viewRange = 5;
+
+    public List<ResourceType> canExtractResourceType = new List<ResourceType>();
 
     public ResourceType hasResourceType;
-    public int hasResourceAmount;
-    public int maxResourceAmount = 10;
+    public float hasResourceAmount;
+    public float maxResourceAmount = 10;
+    public float resourceExtractSpeed = 1;
 
     Path path;
 
     protected override void Awake()
     {
         base.Awake();
+        worldObjectType = ObjectType.Character;
 
         characterAnimator = GetComponent<CharacterAnimator>();
         if (player != null)
             player.characters.Add(this);
+
+        animator = GetComponent<Animator>();
 
         //is nodig om te verplaatsen naar een transform;
         if (targetDummy != null)
@@ -45,7 +56,7 @@ public class Character : WorldObject
     {
         if (pathSuccessful)
         {
-            path = new Path(wayPoints, transform.position,turnDistance,stoppingDistance);
+            path = new Path(wayPoints, transform.position, stoppingDistance);
             StopCoroutine("FollowPath");
             StartCoroutine("FollowPath");
         }
@@ -53,27 +64,27 @@ public class Character : WorldObject
 
     IEnumerator UpdatePath()
     {
-        if(Time.timeSinceLevelLoad<.3f)
+        if (Time.timeSinceLevelLoad < .3f)
         {
             yield return new WaitForSeconds(.3f);
 
         }
-        if (target == null)
-            target = transform;
+        if (targetPosition == null)
+            targetPosition = transform;
 
-        PathRequestManager.RequestPath(new PathRequest(transform.position, target.position, OnPathFound));
+        PathRequestManager.RequestPath(new PathRequest(transform.position, targetPosition.position, OnPathFound));
 
         float sqrMoveThreshold = pathUpdateMoveThreshold * pathUpdateMoveThreshold;
-        Vector3 targetPosOld = target.position;
+        Vector3 targetPosOld = targetPosition.position;
 
         while (true)
         {
             yield return new WaitForSeconds(minPathUpdateTime);
 
-            if ((target.position - targetPosOld).sqrMagnitude > sqrMoveThreshold)
+            if ((targetPosition.position - targetPosOld).sqrMagnitude > sqrMoveThreshold)
             {
-                PathRequestManager.RequestPath(new PathRequest(transform.position, target.position, OnPathFound));
-                targetPosOld = target.position;
+                PathRequestManager.RequestPath(new PathRequest(transform.position, targetPosition.position, OnPathFound));
+                targetPosOld = targetPosition.position;
             }
         }
     }
@@ -81,7 +92,7 @@ public class Character : WorldObject
     public void MoveToPosition(Vector2 position)
     {
         targetDummy.position = position;
-        target = targetDummy;
+        targetPosition = targetDummy;
     }
 
     IEnumerator FollowPath()
@@ -89,28 +100,29 @@ public class Character : WorldObject
         bool followingPath = true;
         int pathIndex = 0;
         //normalized richting bepalen ivm niet kunnen draaien in 2D
-        Vector2 direction = (path.lookPoints[0]- transform.position).normalized;
+        Vector2 direction = (path.lookPoints[0] - transform.position).normalized;
         Vector2 destination = path.lookPoints[0];
         AnimateDirection(direction);
 
         float speedPercent = 1f;
-      
+
         while (followingPath)
         {
             if (followingPath)
             {
                 if (Vector2.Distance(new Vector2(transform.position.x, transform.position.y), destination) < stoppingDistance)
                 {
-                    if (destination == new Vector2(target.position.x, target.position.y))
+                    if (destination == new Vector2(targetPosition.position.x, targetPosition.position.y))
                     {
                         followingPath = false;
+                        animator.SetTrigger("Arrived");
                         AnimateSpecific(CharacterAnimationState.Idle);
-                        yield return null;                             
+                        yield return null;
                     }
 
                     pathIndex++;
                     if (pathIndex >= path.lookPoints.Length)
-                        destination = target.position;
+                        destination = targetPosition.position;
                     else
                         destination = path.lookPoints[pathIndex];
 
@@ -123,6 +135,59 @@ public class Character : WorldObject
         }
         AnimateSpecific(CharacterAnimationState.Idle);
     }
+
+    // ====================== MOVE ==============================================================
+
+    public void MoveToGround(Vector2 position)
+    {
+        MoveToPosition(position);
+        actualTarget = null;
+        returnTarget = null;
+        animator.SetTrigger("MovePosition");
+    }
+
+    public void GatherResource(WorldObject resource, Vector2 slotLocation)
+    {
+        MoveToPosition(slotLocation);
+        actualTarget = resource;
+        returnTarget = null;
+        animator.SetTrigger("MoveResource");
+    }
+
+    public void DeliverResource(WorldObject storage, Vector2 slotLocation)
+    {
+        MoveToPosition(slotLocation);
+        actualTarget = storage;
+        //returnTarget = null;
+        animator.SetTrigger("MoveDeliver");
+    }
+
+    public void FindStorage()
+    {
+        //een storage zoeken om de resources heen te sturen. kunnen álle storages van deze player zijn.
+        returnTarget = actualTarget;
+        List<Building> buildings = player.GetBuildingsForResourceStorage(hasResourceType);
+        if(buildings.Count==0)
+        {
+            Debug.Log(worldObjectName + " kan geen storage vinden voor " + hasResourceType);
+        }
+        else
+        {
+            actualTarget = BigBookBasic.GetNearestBuildingInList(transform.position, buildings);
+            Character[] characterArray = new Character[1];
+            characterArray[0] = this;
+            player.playerController.MoveToObject(actualTarget.gameObject, characterArray);
+        }
+    }
+
+    public void FindNewResource()
+    {
+        //als een resource leeg is en character heeft geen resources, dan zoeken naar een nieuwe. moet binnen viewRange.
+        returnTarget = null;
+        actualTarget = null;
+    }
+
+    // ===========================================================================================
 
     private void AnimateDirection(Vector2 direction)
     {

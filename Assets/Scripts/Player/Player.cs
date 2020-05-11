@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
 {
     public string playerName;
     public PlayerSelection playerSelection;
+    public PlayerController playerController;
     public bool isHuman = false;
 
     private int wood;
@@ -25,6 +26,7 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         playerSelection = GetComponent<PlayerSelection>();
+        playerController = GetComponent<PlayerController>();
     }
 
     private void Start()
@@ -131,5 +133,19 @@ public class Player : MonoBehaviour
         }
         if (OnResourcesChanged != null) OnResourcesChanged(this, EventArgs.Empty);
         return true;
+    }
+
+    public List<Building> GetBuildingsForResourceStorage(ResourceType resourceType=ResourceType.None)
+    {
+        if (resourceType == ResourceType.None)
+            return new List<Building>();
+
+        List<Building> buildingList = new List<Building>();
+        foreach(Building building in buildings)
+        {
+            if (building.acceptsResource.Contains(resourceType))
+                buildingList.Add(building);
+        }
+        return buildingList;
     }
 }

@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public Camera camera;
     public Player player;
+    public Grid grid;
 
     [SerializeField] private LayerMask thingsMask;
     private float timer = 0f;
@@ -18,7 +19,6 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         camera = Camera.main;
-
         instance = this;
     }
 

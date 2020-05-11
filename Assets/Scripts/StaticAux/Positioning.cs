@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,24 +32,58 @@ public static class Positioning
         return destinations;
     }
 
-    public static Vector3[] GetUnitGroupDestinationsAroundResource(Vector3 resourcePos, int unitsNum)
+    public static Vector2[] GetUnitGroupDestinationsAroundWorldObject(WorldObject worldObject, Vector2[] currentPositions, WorldObject[] worldObjects)
     {
-        Vector3[] destinations = new Vector3[unitsNum];
-        float unitDistanceGap = 360.0f / (float)unitsNum;
-
-        for (int x = 0; x < unitsNum; x++)
+        // kijken welke slots rond de resource walkable zijn.
+        Dictionary<Transform, WorldObject> slots = new Dictionary<Transform, WorldObject>();
+        for (int s = 0; s < worldObject.slots.Length; s++) 
         {
-            float angle = unitDistanceGap * x;
-            Vector3 dir = new Vector3(Mathf.Sin(angle * Mathf.Deg2Rad), 0, Mathf.Cos(angle * Mathf.Deg2Rad));
-            destinations[x] = resourcePos + dir;
+            if (PointIsWalkable(worldObject.slots[s].position))
+                slots.Add(worldObject.slots[s], null);
         }
-        return destinations;
+
+        if (slots.Count == 0)
+            return currentPositions;
+
+        // nu per character een vrije slot zoeken.
+        for (int x = 0; x < worldObjects.Length; x++)
+        {
+            Transform slot = worldObject.transform;
+            float distance = 99999;
+            foreach (KeyValuePair<Transform,WorldObject> entry in slots)
+            {
+                if(entry.Value==null)
+                {
+                    float dist = Vector2.Distance(currentPositions[x], entry.Key.position);
+                    if (dist < distance)
+                    {
+                        slot = entry.Key;
+                        distance = dist;
+                    }
+                }
+            }
+            if (slot != worldObject.transform)
+            {
+                slots[slot] = worldObjects[x];
+                currentPositions[x] = slot.position;
+            }
+        }
+        return currentPositions;
     }
 
-    public static Vector3 GetUnitDestinationsAroundResource(Vector3 resourcePos)
+    public static bool PointIsWalkable(Vector2 point)
     {
-        float angle = Random.Range(0, 360);
-        Vector3 dir = new Vector3(Mathf.Sin(angle * Mathf.Deg2Rad), 0, Mathf.Cos(angle * Mathf.Deg2Rad));
-        return resourcePos + dir;
+        Node node = GameManager.instance.grid.NodeFromWorldPoint(new Vector3(point.x, point.y, 0));
+        return node.walkable;
+    }
+
+    public static Vector2[] GetCurrentPositions(Character[] characters)
+    {
+        Vector2[] positions = new Vector2[characters.Length];
+        for (int i = 0; i < characters.Length; i++)
+        {
+            positions[i] = characters[i].transform.position;
+        }
+        return positions;
     }
 }

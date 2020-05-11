@@ -19,6 +19,9 @@ public class WorldObject : MonoBehaviour
     [SerializeField] private List<WorldObjectAction> allWorldObjectActions = new List<WorldObjectAction>();
     public List<WorldObjectAction> allowedWorldObjectActions = new List<WorldObjectAction>();
 
+    public Transform[] slots = new Transform[8];
+    public Character[] slotCharacters = new Character[8];
+
     public event EventHandler OnHealthChanged;
 
     protected virtual void Awake()
@@ -32,6 +35,28 @@ public class WorldObject : MonoBehaviour
             if (player.ActionAvailable(action))
                 allowedWorldObjectActions.Add(action);
         }
+        CreateSlotTransforms();
+    }
+
+    private void CreateSlotTransforms()
+    {
+        slots[0] = CreateSlot(new Vector3(-.7f,-.7f));
+        slots[1] = CreateSlot(new Vector3(-.7f, 0));
+        slots[2] = CreateSlot(new Vector3(-.7f, .7f));
+        slots[3] = CreateSlot(new Vector3(0, -.7f));
+        slots[4] = CreateSlot(new Vector3(0, .7f));
+        slots[5] = CreateSlot(new Vector3(.7f, -.7f));
+        slots[6] = CreateSlot(new Vector3(.7f, 0));
+        slots[7] = CreateSlot(new Vector3(.7f, .7f));
+    }
+
+    private Transform CreateSlot(Vector3 vector3)
+    {
+        GameObject slot = new GameObject("Slot");
+        slot.transform.localScale = Vector3.one*2;
+        slot.transform.position = transform.position + vector3;
+        slot.transform.parent = transform;
+        return slot.transform;
     }
 
     public float HealthPerunage()

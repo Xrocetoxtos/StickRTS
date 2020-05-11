@@ -37,7 +37,6 @@ public class PlayerSelection : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                Debug.Log("klik!!  " + Input.mousePosition.y);
                 StartDrawingSelectionBox();
                 if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl))
                     DeselectAll();
@@ -88,7 +87,7 @@ public class PlayerSelection : MonoBehaviour
             Vector2 pos = character.transform.position;
             if (pos.x > min.x && pos.x < max.x && pos.y > min.y && pos.y < max.y)
             {
-                AddSpecificWorldObject(character);
+                ChangeSpecificWorldObject(character);
             }
         }
         PrioritiseCharacters();
@@ -96,7 +95,7 @@ public class PlayerSelection : MonoBehaviour
 
     // =======================================================================
 
-    private void DeselectAll()
+    public void DeselectAll()
     {
         foreach (WorldObject worldObject in selectedCharacters)
         {
@@ -117,11 +116,13 @@ public class PlayerSelection : MonoBehaviour
 
         if (col != null)
         {
-            AddSpecificWorldObject(BigBookBasic.GetComponentFromGameObject<WorldObject>(col.gameObject));
+            Debug.Log(col.gameObject);
+
+            ChangeSpecificWorldObject(BigBookBasic.GetComponentFromGameObject<WorldObject>(col.gameObject));
         }
     }
 
-    public void AddSpecificWorldObject(WorldObject worldObject)
+    public void ChangeSpecificWorldObject(WorldObject worldObject)
     {
         if (worldObject.worldObjectType == ObjectType.Character)
         {
@@ -208,108 +209,3 @@ public class PlayerSelection : MonoBehaviour
         }
     }
 }
-
-
-
-//    if (Input.GetMouseButtonDown(0) && (!GameManager.instance.selectedPanelOpen || Input.mousePosition.y>120))
-//    {
-//        ToggleSelectionVisual(false);
-//        selectedCharacterList = new List<WorldObject>();
-//        selectedObject = null;
-//        startPos = Input.mousePosition;
-//        TrySelect(BigBookBasic.MousePosition());
-//    }
-
-//    if (Input.GetMouseButtonUp(0))
-//    {
-//        ReleaseSelectionBox();
-//    }
-
-//    if (Input.GetMouseButton(0) && (!GameManager.instance.selectedPanelOpen || Input.mousePosition.y > 120))
-//    {
-//        UpdateSelectionBox(Input.mousePosition);
-//    }
-//}
-
-
-
-//void UpdateSelectionBox(Vector2 curMousePosition)
-//{
-//    if (!selectionBox.gameObject.activeInHierarchy)
-//    {
-//        selectionBox.gameObject.SetActive(true);
-//    }
-//    float width = curMousePosition.x - startPos.x;
-//    float height = curMousePosition.y - startPos.y;
-
-//    selectionBox.anchoredPosition = startPos + new Vector2(width / 2, height / 2);
-//    selectionBox.sizeDelta = new Vector2(Mathf.Abs(width), Mathf.Abs(height));
-//}
-
-//private void ReleaseSelectionBox()
-//{
-//    selectionBox.gameObject.SetActive(false);
-
-//    Vector2 min = GameManager.instance.camera.ScreenToWorldPoint(selectionBox.anchoredPosition - (selectionBox.sizeDelta / 2));
-//    Vector2 max = GameManager.instance.camera.ScreenToWorldPoint(selectionBox.anchoredPosition + (selectionBox.sizeDelta / 2));
-
-//    //eerst checken of er characters in de range zitten. Die krijgen voorrang
-//    foreach (WorldObject character in player.characters)
-//    {
-//        Vector2 pos = character.transform.position;
-//        if (pos.x > min.x && pos.x < max.x && pos.y > min.y && pos.y < max.y)
-//        {
-//            SelectSpecificWorldObject(character);
-//        }
-//    }
-//    if (selectedCharacterList.Count > 0)
-//        return;
-//    else if (selectedObject != null)
-//        SelectSpecificWorldObject(selectedObject);
-//}
-
-//public void TrySelect(Vector2 screenPos)
-//{
-//    selectedObject = null;
-//    Collider2D col = Physics2D.OverlapCircle(screenPos, .01f, selectablesMask);
-
-//    if (col != null)
-//    {
-//        selectedObject = BigBookBasic.GetComponentFromGameObject<WorldObject>(col.gameObject);
-//    }
-//}
-
-//public void SelectSpecificWorldObject(WorldObject worldObject)
-//{
-//    selectedCharacterList.Add(worldObject);
-//    worldObject.ToggleSelectionVisual(true);
-//    selectionChanged = true;
-//    if (OnSelectionChanged != null) OnSelectionChanged(this, EventArgs.Empty);
-
-//}
-
-//private void ToggleSelectionVisual(bool selected)
-//{
-//    foreach (WorldObject worldObject in selectedCharacterList)
-//    {
-//        worldObject.ToggleSelectionVisual(selected);
-//    }
-//}
-
-//public bool HasWorldoObjectsSelected()
-//{
-//    return selectedCharacterList.Count > 0 || selectedObject!=null;
-//}
-
-//public WorldObject[] GetSelectedCharacters()
-//{
-//    if (selectedCharacterList.Count > 0)
-//        return selectedCharacterList.ToArray();
-//    else
-//    {
-//        WorldObject[] worldObjects = new WorldObject[1];
-//        worldObjects[0] = selectedObject;
-//        return worldObjects;
-//    }
-//}
-

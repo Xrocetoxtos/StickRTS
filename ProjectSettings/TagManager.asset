@@ -8,6 +8,7 @@ TagManager:
   - Resource
   - Character
   - Building
+  - Water
   layers:
   - Default
   - TransparentFX

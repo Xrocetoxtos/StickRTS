@@ -6,14 +6,16 @@ using UnityEngine;
 public class Resource : WorldObject
 {
     public ResourceType resourceType;
-    public int resourceAmount=100;
+    public float resourceAmount=100;
+
 
     protected override void Awake()
     {
         base.Awake();
+        worldObjectType = ObjectType.Resource;
     }
 
-    public void ExtractResource(int amount, Character character)
+    public void ExtractResource(float amount, Character character)
     {
         if(resourceAmount<=0)
             DestroyResource(character);
@@ -34,6 +36,14 @@ public class Resource : WorldObject
             else
             {
                 //valt niet te extracten.
+            }
+        }
+        else
+        {
+            if(character.canExtractResourceType.Contains(resourceType))
+            {
+                character.hasResourceAmount = 0;
+                character.hasResourceType = resourceType;
             }
         }
     }

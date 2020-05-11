@@ -44,4 +44,48 @@ public static class BigBookBasic
         return null;
     }
 
+    public static Collider2D PickProminentCollider(Collider2D[] colliders)
+    {
+        ColliderValue colValue = ColliderValue.Nothing;
+        Collider2D prominentCollider = null;
+
+        foreach(Collider2D col in colliders)
+        {
+            if (col.gameObject.CompareTag("Ground") && colValue == ColliderValue.Nothing)
+            {
+                prominentCollider = col;
+                colValue = ColliderValue.Ground;
+                continue;
+            }
+            if (col.gameObject.CompareTag("Water") && (colValue == ColliderValue.Nothing || colValue==ColliderValue.Ground))
+            {
+                prominentCollider = col;
+                colValue = ColliderValue.Water;
+                continue;
+            }
+            if ((col.gameObject.CompareTag("Character") || col.gameObject.CompareTag("Building")|| (col.gameObject.CompareTag("Resource")) && 
+                colValue == ColliderValue.Nothing || colValue == ColliderValue.Ground || colValue == ColliderValue.Water))
+            {
+                prominentCollider = col;
+                break;
+            }
+        }
+        return prominentCollider;
+    }
+
+    public static WorldObject GetNearestBuildingInList(Vector3 position, List<Building> buildings)
+    {
+        Building building=null;
+        float distance = 99999;
+        foreach (Building b in buildings)
+        {
+            float dist = Vector2.Distance(position, b.transform.position);
+            if (dist < distance)
+            {
+                building = b;
+                distance = dist;
+            }
+        }
+        return building;
+    }
 }

@@ -45,7 +45,6 @@ public class WorldObjectDisplay : MonoBehaviour
                 RemoveHealthBar();
 
             SetupActions();
-            Debug.Log("klaar");
         }
     }
 
@@ -93,7 +92,7 @@ public class WorldObjectDisplay : MonoBehaviour
             foreach (WorldObjectAction action in worldObject.allowedWorldObjectActions)
             {
                 GameObject display = Instantiate(actionsDisplayPrefab, actionDisplayContainer);
-                display.GetComponent<WorldObjectActionDisplay>().Setup(action);
+                display.GetComponent<WorldObjectActionDisplay>().Setup(action, worldObject);
             }
         }
         else
@@ -108,7 +107,8 @@ public class WorldObjectDisplay : MonoBehaviour
         if(panel!=null)
         {
             panel.ClearMultiples();
-            panel.playerSelection.AddSpecificWorldObject(worldObject);
+            panel.playerSelection.DeselectAll();
+            panel.playerSelection.ChangeSpecificWorldObject(worldObject);
         }
     }
 }

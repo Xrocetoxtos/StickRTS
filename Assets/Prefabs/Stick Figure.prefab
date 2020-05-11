@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3517681450254579064}
   - component: {fileID: 1227859419287744219}
   - component: {fileID: 576975127956250179}
+  - component: {fileID: 166505582168827587}
   m_Layer: 11
   m_Name: Stick Figure
   m_TagString: Character
@@ -87,6 +88,30 @@ MonoBehaviour:
     - {fileID: -2162244641526213082, guid: 2b678f00ccf2c114bbe6ffa56cef71fb, type: 3}
     - {fileID: 5928188879368806469, guid: 2b678f00ccf2c114bbe6ffa56cef71fb, type: 3}
     flipX: 0
+  - characterAnimationName: WalkDU
+    characterAnimationState: 4
+    frameRate: 0.05
+    animation:
+    - {fileID: -4348799933440933084, guid: 2b678f00ccf2c114bbe6ffa56cef71fb, type: 3}
+    - {fileID: -6066256575346255945, guid: 2b678f00ccf2c114bbe6ffa56cef71fb, type: 3}
+    - {fileID: 6423928720330533337, guid: 2b678f00ccf2c114bbe6ffa56cef71fb, type: 3}
+    - {fileID: -4071584118142962413, guid: 2b678f00ccf2c114bbe6ffa56cef71fb, type: 3}
+    - {fileID: -1402423444162534495, guid: 2b678f00ccf2c114bbe6ffa56cef71fb, type: 3}
+    - {fileID: 7071236933189015149, guid: 2b678f00ccf2c114bbe6ffa56cef71fb, type: 3}
+    - {fileID: -2162244641526213082, guid: 2b678f00ccf2c114bbe6ffa56cef71fb, type: 3}
+    - {fileID: 5928188879368806469, guid: 2b678f00ccf2c114bbe6ffa56cef71fb, type: 3}
+    flipX: 0
+  - characterAnimationName: Mine
+    characterAnimationState: 6
+    frameRate: 0.1
+    animation:
+    - {fileID: 3936278811727743426, guid: 967e6bca32dc62242afcbda19966ec6d, type: 3}
+    - {fileID: -4980974242768393588, guid: 967e6bca32dc62242afcbda19966ec6d, type: 3}
+    - {fileID: -4450373613277517388, guid: 967e6bca32dc62242afcbda19966ec6d, type: 3}
+    - {fileID: -9000201768204658001, guid: 967e6bca32dc62242afcbda19966ec6d, type: 3}
+    - {fileID: -7496908830683048784, guid: 967e6bca32dc62242afcbda19966ec6d, type: 3}
+    - {fileID: 2733856550654064960, guid: 967e6bca32dc62242afcbda19966ec6d, type: 3}
+    flipX: 0
   currentCharacterAnimation:
     characterAnimationName: Idle
     characterAnimationState: 0
@@ -120,13 +145,38 @@ MonoBehaviour:
   allWorldObjectActions:
   - {fileID: 11400000, guid: dda76e213ebf8344bbf17f574aba6e91, type: 2}
   allowedWorldObjectActions: []
+  slots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  slotCharacters:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   characterSelectionVisual: {fileID: 7681572442233786042}
   targetDummy: {fileID: 8243942486023757576}
-  target: {fileID: 0}
+  targetPosition: {fileID: 0}
+  actualTarget: {fileID: 0}
+  animator: {fileID: 0}
   speed: 1
   turnDistance: 5
-  turnSpeed: 3
   stoppingDistance: 0.1
+  viewRange: 5
+  canExtractResourceType: 01000000020000000300000004000000
+  hasResourceType: 0
+  hasResourceAmount: 0
+  maxResourceAmount: 10
+  resourceExtractSpeed: 1
 --- !u!212 &1227859419287744219
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -188,7 +238,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -202,8 +252,27 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.32, y: 0.32}
+  m_Size: {x: 0.28, y: 0.28}
   m_EdgeRadius: 0
+--- !u!95 &166505582168827587
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957081225276268351}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: eaf13cebc30a71f4c888bed055c3e01c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &4324036883759565833
 GameObject:
   m_ObjectHideFlags: 0
@@ -216,7 +285,7 @@ GameObject:
   m_Layer: 11
   m_Name: TargetDummy
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -1412012063857583412, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
