@@ -41,6 +41,7 @@ public class Character : WorldObject
             player.characters.Add(this);
 
         animator = GetComponent<Animator>();
+        animator.SetBool("HasArrived", true);
 
         //is nodig om te verplaatsen naar een transform;
         if (targetDummy != null)
@@ -115,7 +116,7 @@ public class Character : WorldObject
                     if (destination == new Vector2(targetPosition.position.x, targetPosition.position.y))
                     {
                         followingPath = false;
-                        animator.SetTrigger("Arrived");
+                        animator.SetBool("HasArrived", true);
                         AnimateSpecific(CharacterAnimationState.Idle);
                         yield return null;
                     }
@@ -134,6 +135,7 @@ public class Character : WorldObject
             yield return null;
         }
         AnimateSpecific(CharacterAnimationState.Idle);
+        animator.SetBool("HasArrived", true);
     }
 
     // ====================== MOVE ==============================================================
@@ -143,24 +145,32 @@ public class Character : WorldObject
         MoveToPosition(position);
         actualTarget = null;
         returnTarget = null;
-        animator.SetTrigger("MovePosition");
+        animator.SetBool("HasArrived", false);
     }
 
-    public void GatherResource(WorldObject resource, Vector2 slotLocation)
+    public void MoveToWorldObject(WorldObject worldObject, Vector2 slotLocation, bool _actualTargetThis = false, bool _returnTargetNull = false)
     {
         MoveToPosition(slotLocation);
-        actualTarget = resource;
-        returnTarget = null;
-        animator.SetTrigger("MoveResource");
+        actualTarget = _actualTargetThis ? worldObject : null;
+        if (_returnTargetNull)
+            returnTarget = null;
+        animator.SetBool("HasArrived", false);
     }
 
-    public void DeliverResource(WorldObject storage, Vector2 slotLocation)
-    {
-        MoveToPosition(slotLocation);
-        actualTarget = storage;
-        //returnTarget = null;
-        animator.SetTrigger("MoveDeliver");
-    }
+    //public void GatherResource(WorldObject resource, Vector2 slotLocation)
+    //{
+    //    MoveToPosition(slotLocation);
+    //    actualTarget = resource;
+    //    returnTarget = null;
+    //    animator.SetBool("Arrived", false);
+    //}
+
+    //public void DeliverResource(WorldObject storage, Vector2 slotLocation)
+    //{
+    //    MoveToPosition(slotLocation);
+    //    actualTarget = storage;
+    //    animator.SetBool("Arrived", false);
+    //}
 
     public void FindStorage()
     {
@@ -173,7 +183,7 @@ public class Character : WorldObject
         }
         else
         {
-            actualTarget = BigBookBasic.GetNearestBuildingInList(transform.position, buildings);
+            actualTarget = BigBookBasic.GetNearestWorldObjectInList(transform.position, buildings);
             Character[] characterArray = new Character[1];
             characterArray[0] = this;
             player.playerController.MoveToObject(actualTarget.gameObject, characterArray);
@@ -184,7 +194,10 @@ public class Character : WorldObject
     {
         //als een resource leeg is en character heeft geen resources, dan zoeken naar een nieuwe. moet binnen viewRange.
         returnTarget = null;
-        actualTarget = null;
+        actualTarget = BigBookBasic.GetNearestResourceInRange(transform.position, viewRange, hasResourceType);
+        Character[] characterArray = new Character[1];
+        characterArray[0] = this;
+        player.playerController.MoveToObject(actualTarget.gameObject, characterArray);
     }
 
     // ===========================================================================================

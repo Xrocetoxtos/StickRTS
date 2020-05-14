@@ -31,8 +31,6 @@ public class CharacterAnimator : MonoBehaviour
 
     public void ChangeAnimation(CharacterAnimationState state)
     {
-        if (state == CharacterAnimationState.Mine) 
-            Debug.Log("test");
         if (currentCharacterAnimation.characterAnimationState != state)
         {
             currentCharacterAnimation = GetCharacterAnimation(state);

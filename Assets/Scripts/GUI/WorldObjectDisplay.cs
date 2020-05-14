@@ -103,7 +103,6 @@ public class WorldObjectDisplay : MonoBehaviour
 
     public void PickThisWorldObject()
     {
-        Debug.Log("klik");
         if(panel!=null)
         {
             panel.ClearMultiples();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class BigBookBasic
@@ -73,19 +74,71 @@ public static class BigBookBasic
         return prominentCollider;
     }
 
-    public static WorldObject GetNearestBuildingInList(Vector3 position, List<Building> buildings)
+    //public static WorldObject GetNearestWorldObjectInList(Vector3 position, List<Building> buildings)
+    //{
+    //    Building building=null;
+    //    float distance = 99999;
+    //    foreach (Building b in buildings)
+    //    {
+    //        float dist = Vector2.Distance(position, b.transform.position);
+    //        if (dist < distance)
+    //        {
+    //            building = b;
+    //            distance = dist;
+    //        }
+    //    }
+    //    return building;
+    //}
+
+    public static WorldObject GetNearestWorldObjectInList<T>(Vector3 position, List<T> objects) where T : UnityEngine.MonoBehaviour
     {
-        Building building=null;
+        WorldObject wo = null;
         float distance = 99999;
-        foreach (Building b in buildings)
+        List<WorldObject> worldObjects = ConvertToWorldObjectList(objects);
+        foreach (WorldObject o in worldObjects)
         {
-            float dist = Vector2.Distance(position, b.transform.position);
+            float dist = Vector2.Distance(position, o.transform.position);
             if (dist < distance)
             {
-                building = b;
+                wo = o;
                 distance = dist;
             }
         }
-        return building;
+        return wo;
+    }
+
+    private static List<WorldObject> ConvertToWorldObjectList<T>(List<T> objects) where T : UnityEngine.MonoBehaviour
+    {
+        List<WorldObject> worldObjects = new List<WorldObject>();
+        foreach(T o in objects)
+        {
+            worldObjects.Add(GetComponentFromGameObject<WorldObject>(o.gameObject));
+        }
+        return worldObjects;
+    }
+
+    public static WorldObject GetNearestResourceInRange(Vector3 position, float radius, ResourceType resourceType =ResourceType.None)
+    {
+        Collider2D[] resources = Physics2D.OverlapCircleAll(position, radius, GameManager.instance.resourcesMask);
+        if(resources.Length==0)
+            return null;
+        List<Resource> resourcesList = new List<Resource>();
+        foreach(Collider2D collider in resources)
+        {
+            Resource resource = GetComponentFromGameObject<Resource>(collider.gameObject);
+            if (resource.resourceAmount > 0)
+            {
+                if (resourceType == ResourceType.None)
+                    resourcesList.Add(resource);
+                else if (resource.resourceType == resourceType)
+                    resourcesList.Add(resource);
+            }
+        }
+        if (resourcesList.Count == 0)
+            return null;
+        else if (resourcesList.Count == 1)
+            return resourcesList.First();
+        else
+            return GetNearestWorldObjectInList(position, resourcesList);        
     }
 }

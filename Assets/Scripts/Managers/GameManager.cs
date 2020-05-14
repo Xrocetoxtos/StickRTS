@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     public Grid grid;
 
     [SerializeField] private LayerMask thingsMask;
+    public LayerMask resourcesMask;
+
     private float timer = 0f;
     private float timerMax = .3f;
 
@@ -39,5 +41,4 @@ public class GameManager : MonoBehaviour
             timer += Time.deltaTime;
         }
     }
-
 }

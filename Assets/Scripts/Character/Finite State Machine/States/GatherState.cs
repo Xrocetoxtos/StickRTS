@@ -9,6 +9,7 @@ public class GatherState : BaseFSM
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
+
         resource = character.actualTarget.GetComponent<Resource>();
         switch (resource.resourceType)
         {
@@ -33,6 +34,7 @@ public class GatherState : BaseFSM
         resource.ExtractResource(character.resourceExtractSpeed * Time.deltaTime, character);
         if (character.hasResourceAmount >= character.maxResourceAmount || (resource.resourceAmount <= 0 && character.hasResourceAmount > 0))
         {
+            animator.SetBool("HasResources", true);
             character.FindStorage();
         }
         else if (resource.resourceAmount <= 0 && character.hasResourceAmount <= 0)
@@ -42,6 +44,6 @@ public class GatherState : BaseFSM
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
-
+        character.returnTarget = resource;
     }
 }

@@ -27,7 +27,6 @@ public class Resource : WorldObject
         {
             if (character.hasResourceAmount+amount > character.maxResourceAmount)
                 amount = character.maxResourceAmount - character.hasResourceAmount;
-
             if (amount != 0)
             {
                 resourceAmount -= amount;

@@ -579,6 +579,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stick Figure (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 957081225276268351, guid: 07b1c5744c8d22646a2018ee8b3746cb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1487427589529907699, guid: 07b1c5744c8d22646a2018ee8b3746cb,
         type: 3}
       propertyPath: allWorldObjectActions.Array.size
@@ -1261,6 +1266,11 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1559242519}
+    - target: {fileID: 3517681450254579064, guid: 07b1c5744c8d22646a2018ee8b3746cb,
+        type: 3}
+      propertyPath: resourceExtractSpeed
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 4419557798391373334, guid: 07b1c5744c8d22646a2018ee8b3746cb,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2032,6 +2042,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stick Figure (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 957081225276268351, guid: 07b1c5744c8d22646a2018ee8b3746cb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1487427589529907699, guid: 07b1c5744c8d22646a2018ee8b3746cb,
         type: 3}
       propertyPath: allWorldObjectActions.Array.size
@@ -2326,7 +2341,7 @@ Transform:
   - {fileID: 1794362790}
   - {fileID: 2023891458}
   m_Father: {fileID: 2119793166}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &663476506
 GameObject:
@@ -2793,6 +2808,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Stick Figure (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 957081225276268351, guid: 07b1c5744c8d22646a2018ee8b3746cb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1487427589529907699, guid: 07b1c5744c8d22646a2018ee8b3746cb,
         type: 3}
@@ -3508,6 +3528,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Rock (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3837072248796411838, guid: 96beaafda7e2cf049abe4903a5647a70,
+        type: 3}
+      propertyPath: resourceAmount
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6339058766969088660, guid: 96beaafda7e2cf049abe4903a5647a70,
         type: 3}
@@ -4260,7 +4285,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2119793166}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1103918503
 PrefabInstance:
@@ -4273,6 +4298,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Stick Figure
+      objectReference: {fileID: 0}
+    - target: {fileID: 957081225276268351, guid: 07b1c5744c8d22646a2018ee8b3746cb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1487427589529907699, guid: 07b1c5744c8d22646a2018ee8b3746cb,
         type: 3}
@@ -4350,7 +4380,7 @@ PrefabInstance:
     - target: {fileID: 4419557798391373334, guid: 07b1c5744c8d22646a2018ee8b3746cb,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4419557798391373334, guid: 07b1c5744c8d22646a2018ee8b3746cb,
         type: 3}
@@ -4952,6 +4982,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stick Figure (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 957081225276268351, guid: 07b1c5744c8d22646a2018ee8b3746cb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1487427589529907699, guid: 07b1c5744c8d22646a2018ee8b3746cb,
         type: 3}
       propertyPath: player
@@ -5474,6 +5509,9 @@ MonoBehaviour:
   thingsMask:
     serializedVersion: 2
     m_Bits: 14592
+  resourcesMask:
+    serializedVersion: 2
+    m_Bits: 4096
   selectedPanelOpen: 0
 --- !u!4 &1525168185
 Transform:
@@ -6116,6 +6154,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stick Figure (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 957081225276268351, guid: 07b1c5744c8d22646a2018ee8b3746cb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1487427589529907699, guid: 07b1c5744c8d22646a2018ee8b3746cb,
         type: 3}
       propertyPath: player
@@ -6623,6 +6666,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Stick Figure (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 957081225276268351, guid: 07b1c5744c8d22646a2018ee8b3746cb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1487427589529907699, guid: 07b1c5744c8d22646a2018ee8b3746cb,
         type: 3}
@@ -7297,9 +7345,9 @@ Transform:
   - {fileID: 519420032}
   - {fileID: 1525168185}
   - {fileID: 192579379}
-  - {fileID: 114952865}
   - {fileID: 1100238212}
   - {fileID: 661946567}
+  - {fileID: 114952865}
   - {fileID: 1438254147}
   - {fileID: 1262131315}
   - {fileID: 54823334}

@@ -123,20 +123,25 @@ public class PlayerController : MonoBehaviour
             case ObjectType.Building:
                 for (int i = 0; i < characters.Length; i++)
                 {
-                    characters[i].DeliverResource(worldObject, positions[i]);
+                    //characters[i].DeliverResource(worldObject, positions[i]);
+                    characters[i].MoveToWorldObject(worldObject, positions[i], true);
                 }
                 break;
             case ObjectType.Character:
                 for (int i = 0; i < characters.Length; i++)
                 {
-                    characters[i].actualTarget = worldObject;
+                    characters[i].animator.SetBool("Gathering", false);
+                    //characters[i].actualTarget = worldObject;
+                    characters[i].MoveToWorldObject(worldObject, positions[i], true);
                 }
                 break;
             case ObjectType.Resource:
                 {
                     for (int i = 0; i < characters.Length; i++)
                     {
-                        characters[i].GatherResource(worldObject, positions[i]);
+                        characters[i].animator.SetBool("IsGathering", true);
+                        //characters[i].GatherResource(worldObject, positions[i]);
+                        characters[i].MoveToWorldObject(worldObject, positions[i], true, true);
                     }
                     break;
                 }
