@@ -195,9 +195,17 @@ public class Character : WorldObject
         //als een resource leeg is en character heeft geen resources, dan zoeken naar een nieuwe. moet binnen viewRange.
         returnTarget = null;
         actualTarget = BigBookBasic.GetNearestResourceInRange(transform.position, viewRange, hasResourceType);
-        Character[] characterArray = new Character[1];
-        characterArray[0] = this;
-        player.playerController.MoveToObject(actualTarget.gameObject, characterArray);
+        if (actualTarget != null)
+        {
+            Character[] characterArray = new Character[1];
+            characterArray[0] = this;
+            player.playerController.MoveToObject(actualTarget.gameObject, characterArray);
+        }
+        else
+        {
+            animator.SetBool("HasResources", false);
+            animator.SetBool("IsGathering", false);
+        }
     }
 
     // ===========================================================================================
@@ -208,7 +216,7 @@ public class Character : WorldObject
             characterAnimator.GetAnimationFromVector2(direction.x, direction.y);
     }
 
-    private void AnimateSpecific(CharacterAnimationState stickFigureAnimation)
+    public void AnimateSpecific(CharacterAnimationState stickFigureAnimation)
     {
         if (characterAnimator)
             characterAnimator.ChangeAnimation(stickFigureAnimation);

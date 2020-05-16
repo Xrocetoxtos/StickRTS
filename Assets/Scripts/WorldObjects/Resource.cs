@@ -6,13 +6,15 @@ using UnityEngine;
 public class Resource : WorldObject
 {
     public ResourceType resourceType;
-    public float resourceAmount=100;
+    public float resourceAmount;
+    public float maxResourceAmount = 100;
 
 
     protected override void Awake()
     {
         base.Awake();
         worldObjectType = ObjectType.Resource;
+        resourceAmount = maxResourceAmount;
     }
 
     public void ExtractResource(float amount, Character character)
@@ -31,6 +33,11 @@ public class Resource : WorldObject
             {
                 resourceAmount -= amount;
                 character.hasResourceAmount += amount;
+                if (resourceAmount <= .1f)
+                {
+                    character.hasResourceAmount += resourceAmount;
+                    resourceAmount -= resourceAmount;
+                }
             }
             else
             {
@@ -45,6 +52,14 @@ public class Resource : WorldObject
                 character.hasResourceType = resourceType;
             }
         }
+    }
+
+    public float GetResourcePerunage()
+    {
+        if (maxResourceAmount != 0)
+            return resourceAmount / maxResourceAmount;
+        else
+            return 0;
     }
 
     private void DestroyResource(Character character)

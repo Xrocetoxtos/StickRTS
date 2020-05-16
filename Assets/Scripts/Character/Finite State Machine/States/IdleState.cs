@@ -6,6 +6,7 @@ public class IdleState : BaseFSM
 {
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animator.ResetTrigger("IsIdle");
+        base.OnStateEnter(animator, stateInfo, layerIndex);
+        character.AnimateSpecific(CharacterAnimationState.Idle);
     }
 }

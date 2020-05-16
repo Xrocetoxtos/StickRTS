@@ -21,6 +21,7 @@ public class WorldObject : MonoBehaviour
 
     public Transform[] slots = new Transform[8];
     public Character[] slotCharacters = new Character[8];
+    [SerializeField] private float slotDistanceFromObject = .72f;
 
     public event EventHandler OnHealthChanged;
 
@@ -40,14 +41,14 @@ public class WorldObject : MonoBehaviour
 
     private void CreateSlotTransforms()
     {
-        slots[0] = CreateSlot(new Vector3(-.7f,-.7f));
-        slots[1] = CreateSlot(new Vector3(-.7f, 0));
-        slots[2] = CreateSlot(new Vector3(-.7f, .7f));
-        slots[3] = CreateSlot(new Vector3(0, -.7f));
-        slots[4] = CreateSlot(new Vector3(0, .7f));
-        slots[5] = CreateSlot(new Vector3(.7f, -.7f));
-        slots[6] = CreateSlot(new Vector3(.7f, 0));
-        slots[7] = CreateSlot(new Vector3(.7f, .7f));
+        slots[0] = CreateSlot(new Vector3(-slotDistanceFromObject, -slotDistanceFromObject));
+        slots[1] = CreateSlot(new Vector3(-slotDistanceFromObject, 0));
+        slots[2] = CreateSlot(new Vector3(-slotDistanceFromObject, slotDistanceFromObject));
+        slots[3] = CreateSlot(new Vector3(0, -slotDistanceFromObject));
+        slots[4] = CreateSlot(new Vector3(0, slotDistanceFromObject));
+        slots[5] = CreateSlot(new Vector3(slotDistanceFromObject, -slotDistanceFromObject));
+        slots[6] = CreateSlot(new Vector3(slotDistanceFromObject, 0));
+        slots[7] = CreateSlot(new Vector3(slotDistanceFromObject, slotDistanceFromObject));
     }
 
     private Transform CreateSlot(Vector3 vector3)

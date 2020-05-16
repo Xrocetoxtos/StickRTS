@@ -18,6 +18,11 @@ public class WorldObjectDisplay : MonoBehaviour
     [SerializeField] private GameObject healthBarObject;
     [SerializeField] private Image worldObjectHealthBar;
 
+    [SerializeField] private Image resourceImage;
+    [SerializeField] private TextMeshProUGUI resourceAmountText;
+    [SerializeField] private GameObject resourceBarObject;
+    [SerializeField] private Image resourceBar;
+
     [SerializeField] private GameObject actionsDisplayObject;
     [SerializeField] private Transform actionDisplayContainer;
     [SerializeField] private GameObject actionsDisplayPrefab;
@@ -38,12 +43,22 @@ public class WorldObjectDisplay : MonoBehaviour
             if (worldObjectImage != null)
                 worldObjectImage.sprite = worldObject.worldObjectSprite;
             if (worldObjectPlayerNameText != null)
-                worldObjectPlayerNameText.SetText("("+ worldObject.player.playerName + ")");
+                worldObjectPlayerNameText.SetText("(" + worldObject.player.playerName + ")");
             if (worldObjectHealthBar != null)
                 SetUpHealthBar();
             else
                 RemoveHealthBar();
 
+            switch (worldObject.worldObjectType)
+            {
+                case ObjectType.Character:
+                    break;
+                case ObjectType.Building:
+                    break;
+                case ObjectType.Resource:
+                    SetupResource();
+                    break;
+            }
             SetupActions();
         }
     }
@@ -57,7 +72,11 @@ public class WorldObjectDisplay : MonoBehaviour
             worldObjectDescriptionText.SetText("");
         if (worldObjectImage != null)
             worldObjectImage.sprite = null;
-            RemoveHealthBar();
+        if (resourceImage != null)
+            resourceImage.sprite = null;
+        if (resourceAmountText != null)
+            resourceAmountText.SetText("");
+        RemoveHealthBar();
     }
 
     private void RemoveHealthBar()
@@ -68,14 +87,35 @@ public class WorldObjectDisplay : MonoBehaviour
 
     private void SetUpHealthBar()
     {
-        healthBarObject.SetActive(true);
-        worldObjectHealthBar.fillAmount = worldObject.HealthPerunage();
+        if (healthBarObject != null)
+        {
+            healthBarObject.SetActive(true);
+            worldObjectHealthBar.fillAmount = worldObject.HealthPerunage();
+        }
     }
 
     private void WorldObject_OnHealthChanged(object sender, System.EventArgs e)
     {
         //bijwerken healthbar
         SetUpHealthBar();
+    }
+
+    private void SetupResource()
+    {
+        Resource resource = BigBookBasic.GetComponentFromGameObject<Resource>(worldObject.gameObject);
+        if (resourceImage != null)
+            resourceImage.sprite = GUIManager.instance.GetResouceSprite(resource.resourceType);
+        if (resourceAmountText != null)
+        {
+            int am = (int)resource.resourceAmount;
+            int ma = (int)resource.maxResourceAmount;
+            resourceAmountText.SetText(am.ToString() + "/" + ma.ToString());
+        }
+        if (resourceBarObject != null)
+        {
+            resourceBarObject.SetActive(true);
+            resourceBar.fillAmount = resource.GetResourcePerunage();
+        }
     }
 
     private void SetupActions()

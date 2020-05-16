@@ -149,6 +149,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  slotDistanceFromObject: 0.72
   acceptsResource: 04000000
 --- !u!1 &9180561091635749011
 GameObject:

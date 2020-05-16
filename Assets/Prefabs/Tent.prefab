@@ -132,6 +132,25 @@ MonoBehaviour:
   allWorldObjectActions:
   - {fileID: 11400000, guid: d49ae70428f36d34997003f0f1c29c04, type: 2}
   allowedWorldObjectActions: []
+  slots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  slotCharacters:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  slotDistanceFromObject: 0.72
 --- !u!1 &9180561091635749011
 GameObject:
   m_ObjectHideFlags: 0
