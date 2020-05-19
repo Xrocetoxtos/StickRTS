@@ -157,21 +157,6 @@ public class Character : WorldObject
         animator.SetBool("HasArrived", false);
     }
 
-    //public void GatherResource(WorldObject resource, Vector2 slotLocation)
-    //{
-    //    MoveToPosition(slotLocation);
-    //    actualTarget = resource;
-    //    returnTarget = null;
-    //    animator.SetBool("Arrived", false);
-    //}
-
-    //public void DeliverResource(WorldObject storage, Vector2 slotLocation)
-    //{
-    //    MoveToPosition(slotLocation);
-    //    actualTarget = storage;
-    //    animator.SetBool("Arrived", false);
-    //}
-
     public void FindStorage()
     {
         //een storage zoeken om de resources heen te sturen. kunnen álle storages van deze player zijn.

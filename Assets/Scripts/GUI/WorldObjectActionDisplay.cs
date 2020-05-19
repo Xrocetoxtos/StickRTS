@@ -41,4 +41,9 @@ public class WorldObjectActionDisplay : MonoBehaviour
         if (unavailableMask != null)
             unavailableMask.SetActive(!action.IsAvailable(worldObject.player));
     }
+
+    public void Perform()
+    {
+        action.Perform(worldObject.player);
+    }
 }

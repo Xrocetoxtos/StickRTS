@@ -15,6 +15,20 @@ public class GUIManager : MonoBehaviour
     private GameObject selectedPanelObject;
     private SelectedPanel selectedPanel;
 
+    [System.Serializable]
+    public class TemporaryMessage
+    {
+        public string messageID;
+        public GameObject messageObject;
+        public TextMeshProUGUI messageBar;
+        public bool showingMessage = false;
+        public int messageTick5Cur;
+        public int messageTick5Max;
+        public int messageTickCur;
+        public int messageTickMax;
+    }
+    [SerializeField] List<TemporaryMessage> temporaryMessages;
+
     public static GUIManager instance;
 
     private void Awake()
@@ -28,6 +42,56 @@ public class GUIManager : MonoBehaviour
         selectedPanelObject.SetActive(false);
 
         GameManager.instance.player.OnResourcesChanged += Player_OnResourcesChanged;
+        TimeTickSystem.OnTick_5 += TimeTickSystem_OnTick_5;
+        TimeTickSystem.OnTick += TimeTickSystem_OnTick;
+    }
+
+    private void TimeTickSystem_OnTick(object sender, TimeTickSystem.OnTickEventArgs e)
+    {
+        foreach (TemporaryMessage temporaryMessage in temporaryMessages)
+        {
+            if (temporaryMessage.showingMessage && temporaryMessage.messageTickMax > 0)
+            {
+                if (temporaryMessage.messageTickCur >= temporaryMessage.messageTickMax)
+                {
+                    temporaryMessage.messageObject.SetActive(false);
+                    temporaryMessage.messageBar.SetText("");
+                    temporaryMessage.showingMessage = false;
+                    temporaryMessage.messageTickCur = 0;
+                }
+            }
+            temporaryMessage.messageTickCur++;
+        }
+    }
+    private void TimeTickSystem_OnTick_5(object sender, TimeTickSystem.OnTickEventArgs e)
+    {
+        foreach(TemporaryMessage temporaryMessage in temporaryMessages)
+        {
+            if(temporaryMessage.showingMessage && temporaryMessage.messageTick5Max > 0)
+            {
+                if(temporaryMessage.messageTick5Cur >=temporaryMessage.messageTick5Max)
+                {
+                    temporaryMessage.messageObject.SetActive(false);
+                    temporaryMessage.messageBar.SetText("");
+                    temporaryMessage.showingMessage = false;
+                    temporaryMessage.messageTick5Cur = 0;
+                }
+            }
+            temporaryMessage.messageTick5Cur++;
+        }
+    }
+
+    public void SetTemporaryMessage(string id, string text)
+    {
+        TemporaryMessage temporaryMessage = temporaryMessages.Find(x => x.messageID == id && x.messageObject!=null);
+        if (temporaryMessage != null)
+        {
+            temporaryMessage.messageObject.SetActive(true);
+            temporaryMessage.messageBar.SetText(text);
+            temporaryMessage.messageTickCur = 0;
+            temporaryMessage.messageTick5Cur = 0;
+            temporaryMessage.showingMessage = true;
+        }
     }
 
     private void Player_OnResourcesChanged(object sender, EventArgs e)

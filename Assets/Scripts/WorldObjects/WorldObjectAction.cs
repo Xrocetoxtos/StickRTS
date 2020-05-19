@@ -31,7 +31,11 @@ public class WorldObjectAction : ScriptableObject
     public void Perform(Player player)
     {
         if (!EnoughResources(player))
+        {
+            string message = "Insufficient resources to perform action " + actionName;
+            GUIManager.instance.SetTemporaryMessage("Message Bar", message);
             return;
+        }
 
         switch (actionType)
         {
