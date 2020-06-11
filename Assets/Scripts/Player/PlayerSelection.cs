@@ -15,8 +15,8 @@ public class PlayerSelection : MonoBehaviour
     private Vector2 startPos;
     public bool selectionChanged = false;
 
-    public List<WorldObject> selectedCharacters = new List<WorldObject>();
-    public List<WorldObject> selectedNonCharacters = new List<WorldObject>();
+    public List<WorldObject> selectedUnits = new List<WorldObject>();
+    public List<WorldObject> selectedNonUnits = new List<WorldObject>();
 
     private void Awake()
     {
@@ -97,16 +97,16 @@ public class PlayerSelection : MonoBehaviour
 
     public void DeselectAll()
     {
-        foreach (WorldObject worldObject in selectedCharacters)
+        foreach (WorldObject worldObject in selectedUnits)
         {
             worldObject.ToggleSelectionVisual(false);
         }
-        foreach (WorldObject worldObject in selectedNonCharacters)
+        foreach (WorldObject worldObject in selectedNonUnits)
         {
             worldObject.ToggleSelectionVisual(false);
         }
-        selectedCharacters.Clear();
-        selectedNonCharacters.Clear();
+        selectedUnits.Clear();
+        selectedNonUnits.Clear();
     }
 
     private void AddClickToSelection()
@@ -126,33 +126,33 @@ public class PlayerSelection : MonoBehaviour
     {
         if (worldObject.worldObjectType == ObjectType.Character)
         {
-            if (!selectedCharacters.Contains(worldObject))
+            if (!selectedUnits.Contains(worldObject))
             {
-                selectedCharacters.Add(worldObject);
+                selectedUnits.Add(worldObject);
                 worldObject.ToggleSelectionVisual(true);
             }
             else
             {
-                selectedCharacters.Remove(worldObject);
+                selectedUnits.Remove(worldObject);
                 worldObject.ToggleSelectionVisual(false);
             }
         }
         else
         {
-            if (!selectedNonCharacters.Contains(worldObject))
+            if (!selectedNonUnits.Contains(worldObject))
             {
-                foreach (WorldObject wo in selectedNonCharacters)
+                foreach (WorldObject wo in selectedNonUnits)
                 {
                     if (wo !=worldObject)
                         wo.ToggleSelectionVisual(false);
                 }
-                selectedNonCharacters.Clear();
-                selectedNonCharacters.Add(worldObject);
+                selectedNonUnits.Clear();
+                selectedNonUnits.Add(worldObject);
                 worldObject.ToggleSelectionVisual(true);
             }
             else
             {
-                selectedNonCharacters.Clear();
+                selectedNonUnits.Clear();
                 worldObject.ToggleSelectionVisual(false);
             }
 
@@ -161,37 +161,37 @@ public class PlayerSelection : MonoBehaviour
     }
     private void PrioritiseCharacters()
     {
-        if (selectedCharacters.Count > 0)
-            selectedNonCharacters.Clear();
+        if (selectedUnits.Count > 0)
+            selectedNonUnits.Clear();
     }
 
     public bool HasWorldoObjectsSelected()
     {
-        return selectedCharacters.Count > 0 || selectedNonCharacters.Count > 0;
+        return selectedUnits.Count > 0 || selectedNonUnits.Count > 0;
     }
     public WorldObject[] GetSelectedObjects()
     {
-        if (selectedCharacters.Count > 0)
-            return selectedCharacters.ToArray();
+        if (selectedUnits.Count > 0)
+            return selectedUnits.ToArray();
         else
-            return selectedNonCharacters.ToArray();
+            return selectedNonUnits.ToArray();
     }
 
     public void RemoveNullObjectsFromSelection()
     {
-        for (int x = 0; x < selectedCharacters.Count; x++)
+        for (int x = 0; x < selectedUnits.Count; x++)
         {
-            if (selectedCharacters[x] == null)
+            if (selectedUnits[x] == null)
             {
-                selectedCharacters.RemoveAt(x);
+                selectedUnits.RemoveAt(x);
                 selectionChanged = true;
             }
         }
-        for (int x = 0; x < selectedNonCharacters.Count; x++)
+        for (int x = 0; x < selectedNonUnits.Count; x++)
         {
-            if (selectedNonCharacters[x] == null)
+            if (selectedNonUnits[x] == null)
             {
-                selectedNonCharacters.RemoveAt(x);
+                selectedNonUnits.RemoveAt(x);
                 selectionChanged = true;
             }
         }
@@ -199,11 +199,11 @@ public class PlayerSelection : MonoBehaviour
 
     private void ToggleVisuals()
     {
-        foreach (WorldObject worldObject in selectedCharacters)
+        foreach (WorldObject worldObject in selectedUnits)
         {
             worldObject.ToggleSelectionVisual(true);
         }
-        foreach (WorldObject worldObject in selectedNonCharacters)
+        foreach (WorldObject worldObject in selectedNonUnits)
         {
             worldObject.ToggleSelectionVisual(true);
         }

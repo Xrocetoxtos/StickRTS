@@ -45,7 +45,19 @@ public static class BigBookBasic
         return null;
     }
 
-    public static Collider2D PickProminentCollider(Collider2D[] colliders)
+    public static bool DistanceBetweenIsLess(Vector3 position1, Vector3 position2, float minDistance)
+    {
+        return (position1 - position2).sqrMagnitude < minDistance * minDistance;
+    }
+
+    public static MovementController[] ThisUnitToArray(MovementController unit)
+    {
+        MovementController[] units = new MovementController[1];
+        units[0] = unit;
+        return units;
+    }
+
+        public static Collider2D PickProminentCollider(Collider2D[] colliders)
     {
         ColliderValue colValue = ColliderValue.Nothing;
         Collider2D prominentCollider = null;
@@ -74,22 +86,6 @@ public static class BigBookBasic
         return prominentCollider;
     }
 
-    //public static WorldObject GetNearestWorldObjectInList(Vector3 position, List<Building> buildings)
-    //{
-    //    Building building=null;
-    //    float distance = 99999;
-    //    foreach (Building b in buildings)
-    //    {
-    //        float dist = Vector2.Distance(position, b.transform.position);
-    //        if (dist < distance)
-    //        {
-    //            building = b;
-    //            distance = dist;
-    //        }
-    //    }
-    //    return building;
-    //}
-
     public static WorldObject GetNearestWorldObjectInList<T>(Vector3 position, List<T> objects) where T : UnityEngine.MonoBehaviour
     {
         WorldObject wo = null;
@@ -115,6 +111,11 @@ public static class BigBookBasic
             worldObjects.Add(GetComponentFromGameObject<WorldObject>(o.gameObject));
         }
         return worldObjects;
+    }
+
+    public static Vector2 GetDirectionVector2(Vector2 destination, Vector3 position)
+    {
+        return (destination - new Vector2(position.x, position.y)).normalized;
     }
 
     public static WorldObject GetNearestResourceInRange(Vector3 position, float radius, ResourceType resourceType =ResourceType.None)

@@ -12,28 +12,39 @@ public class CharacterAnimator : MonoBehaviour
     [SerializeField] private int frameNumber;
     [SerializeField] private float timer = 0;
     [SerializeField] private float timerMax = .2f;
+    [SerializeField] private int currentTick;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        currentCharacterAnimation = GetCharacterAnimation("Idle");
+        currentCharacterAnimation = GetCharacterAnimation(CharacterAnimationState.Idle, CharacterAnimationDirection.Down);
         SetUpAnimation();
     }
 
-    public void ChangeAnimation(string animationName)
+    private void Start()
     {
-        if(currentCharacterAnimation.characterAnimationName != animationName)
-        {
-            currentCharacterAnimation = GetCharacterAnimation(animationName);
-            SetUpAnimation();
-        }
+        TimeTickSystem.OnTickMicro += TimeTickSystem_OnTickMicro;
     }
 
-    public void ChangeAnimation(CharacterAnimationState state)
+    private void TimeTickSystem_OnTickMicro(object sender, TimeTickSystem.OnTickEventArgs e)
     {
-        if (currentCharacterAnimation.characterAnimationState != state)
+        if (currentTick >= currentCharacterAnimation.microTicksToNewFrame)
         {
-            currentCharacterAnimation = GetCharacterAnimation(state);
+            frameNumber++;
+            if (frameNumber >= currentCharacterAnimation.animation.Length)
+                frameNumber = 0;
+            spriteRenderer.sprite = currentCharacterAnimation.animation[frameNumber];
+            currentTick = 0;
+        }
+        else
+            currentTick++;
+    }
+
+    public void ChangeAnimation(CharacterAnimationState state, CharacterAnimationDirection direction=CharacterAnimationDirection.Down)
+    {
+        if (currentCharacterAnimation.characterAnimationState != state || currentCharacterAnimation.characterAnimationDirection!=direction)
+        {
+            currentCharacterAnimation = GetCharacterAnimation(state, direction);
             SetUpAnimation();
         }
     }
@@ -43,77 +54,57 @@ public class CharacterAnimator : MonoBehaviour
         frameNumber = 0;
         spriteRenderer.flipX = currentCharacterAnimation.flipX;
         timer = 0;
-        timerMax = currentCharacterAnimation.frameRate;
+        currentTick = 0;
+        //timerMax = currentCharacterAnimation.frameRate;
     }
 
-    private void Update()
+    public void GetAnimationFromVector2(float x, float y, CharacterAnimationState animationState)
     {
-        if (currentCharacterAnimation.animation.Length == 0)
-            return;
-
-        if (frameNumber >= currentCharacterAnimation.animation.Length)
-            frameNumber = 0;
-
-        if (timer>timerMax)
-        {
-            timer -= timerMax;
-            frameNumber++;
-            if (frameNumber >= currentCharacterAnimation.animation.Length)
-                frameNumber = 0;
-            spriteRenderer.sprite = currentCharacterAnimation.animation[frameNumber];
-        }
-        else
-        {
-            timer += Time.deltaTime;
-        }
-    }
-
-    public void GetAnimationFromVector2(float x, float y)
-    {
-        CharacterAnimationState state = CharacterAnimationState.WalkLR;
+        CharacterAnimationDirection direction = CharacterAnimationDirection.Down;
         if (x == 0 && y != 0)
         {
             if ((y > 0))
-                ChangeAnimation(CharacterAnimationState.WalkDU);
+                direction = CharacterAnimationDirection.Up;
             else
-                ChangeAnimation(CharacterAnimationState.WalkUD);
-            return;
-        }
-
-        if (x < 0)
-        {
-            x *= -1;
-            state = CharacterAnimationState.WalkRL;
-        }
-
-        if (y > x || (y < 0 && y + x < 0))
-        {
-            if ((y > 0))
-                ChangeAnimation(CharacterAnimationState.WalkDU);
-            else
-                ChangeAnimation(CharacterAnimationState.WalkUD);
+                direction = CharacterAnimationDirection.Down;
         }
         else
-            ChangeAnimation(state);
+        {
+            if (x < 0)
+            {
+                x *= -1;
+                direction = CharacterAnimationDirection.Left;
+            }
+            else
+                direction = CharacterAnimationDirection.Right;
+
+            if (y > x || (y < 0 && y + x < 0))
+            {
+                if ((y > 0))
+                    direction = CharacterAnimationDirection.Up;
+                else
+                    direction = CharacterAnimationDirection.Down;
+            }
+        }
+        //else
+        //ChangeAnimation(state);
+        ChangeAnimation(animationState, direction);
     }
 
-    private CharacterAnimation GetCharacterAnimation(string name)
+    private CharacterAnimation GetCharacterAnimation(CharacterAnimationState state, CharacterAnimationDirection direction=CharacterAnimationDirection.Down)
     {
         for (int i = 0; i < characterAnimations.Length; i++)
         {
-            if (characterAnimations[i].characterAnimationName == name)
+            if (characterAnimations[i].characterAnimationState == state && characterAnimations[i].characterAnimationDirection==direction)
                 return characterAnimations[i];
         }
         return characterAnimations[0];
     }
-    private CharacterAnimation GetCharacterAnimation(CharacterAnimationState state)
+
+    public void Disable()
     {
-        for (int i = 0; i < characterAnimations.Length; i++)
-        {
-            if (characterAnimations[i].characterAnimationState == state)
-                return characterAnimations[i];
-        }
-        return characterAnimations[0];
+        TimeTickSystem.OnTickMicro -= TimeTickSystem_OnTickMicro;
+        this.enabled = false;
     }
 }
 
@@ -122,7 +113,8 @@ public struct CharacterAnimation
 {
     public string characterAnimationName;
     public CharacterAnimationState characterAnimationState;
-    public float frameRate;
+    public CharacterAnimationDirection characterAnimationDirection;
+    public int microTicksToNewFrame;
     public Sprite[] animation;
     public bool flipX;
 }

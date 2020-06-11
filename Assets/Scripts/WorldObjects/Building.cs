@@ -10,6 +10,11 @@ public class Building : WorldObject
     {
         base.Awake();
         worldObjectType = ObjectType.Building;
+    }
+
+    protected override void Start()
+    {
+        base.Start();
         if (player != null)
             player.buildings.Add(this);
     }

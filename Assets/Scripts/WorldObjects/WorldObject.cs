@@ -5,23 +5,32 @@ using UnityEngine;
 
 public class WorldObject : MonoBehaviour
 {
+    [Header("Info")]
     public ObjectType worldObjectType;
     public Player player;
     public string worldObjectName;
     public string worldObjectDescription;
     public Sprite worldObjectSprite;
 
+    [Header("Components")]
+    public AIController aIController;
+    public MovementController movement;
+
+
     public GameObject worldObjectSelectionVisual;
 
     private int currentHealth;
     [SerializeField] private int maxHealth=10;
+    public Sprite deadSprite;
 
     [SerializeField] private List<WorldObjectAction> allWorldObjectActions = new List<WorldObjectAction>();
     public List<WorldObjectAction> allowedWorldObjectActions = new List<WorldObjectAction>();
 
     public Transform[] slots = new Transform[8];
-    public Character[] slotCharacters = new Character[8];
+    public Unit[] slotCharacters = new Unit[8];
     [SerializeField] private float slotDistanceFromObject = .72f;
+
+    public CharacterAnimationState killAnimation=CharacterAnimationState.FightStab;
 
     public event EventHandler OnHealthChanged;
 
@@ -37,6 +46,14 @@ public class WorldObject : MonoBehaviour
                 allowedWorldObjectActions.Add(action);
         }
         CreateSlotTransforms();
+
+        movement = GetComponent<MovementController>();
+        aIController = GetComponent<AIController>();
+    }
+
+    protected virtual void Start()
+    {
+
     }
 
     private void CreateSlotTransforms()
@@ -73,9 +90,30 @@ public class WorldObject : MonoBehaviour
             Die();
     }
 
-    private void Die()
+    protected virtual void Die()
     {
         Debug.Log(worldObjectName + " died.");
+        if(deadSprite!=null)
+        {
+            TryGetComponent<SpriteRenderer>(out SpriteRenderer sr);
+            if(sr!=null)
+            {
+                sr.sprite = deadSprite;
+                
+            }
+        }
+        TryGetComponent<Animator>(out Animator anim);
+        if (anim != null) anim.SetTrigger("Death");
+        //if(aIController)
+        //    aIController.enabled = false;
+        //if(movement)
+        //    movement.enabled = false;
+        //TryGetComponent<CharacterAnimator>(out CharacterAnimator ca);
+        //if (ca != null)
+        //    ca.Disable();
+        //TryGetComponent<GatherController>(out GatherController gc);
+        //if (gc != null)
+        //    gc.enabled = false;
     }
 
     public void ToggleSelectionVisual(bool visual)

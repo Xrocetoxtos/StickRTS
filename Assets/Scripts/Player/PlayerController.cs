@@ -6,142 +6,188 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private PlayerSelection playerSelection;
+    private Player player;
 
     private void Awake()
     {
         playerSelection = GetComponent<PlayerSelection>();
+        player = GetComponent<Player>();
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(1) && playerSelection.HasWorldoObjectsSelected())
         {
-            playerSelection.RemoveNullObjectsFromSelection();
-            WorldObject[] selectedObjects = playerSelection.GetSelectedObjects();
-            Character[] selectedCharacters = new Character[selectedObjects.Length];
-
-            if (selectedObjects[0].worldObjectType == ObjectType.Character)
+            if (playerSelection.selectedUnits.Count > 0)
             {
+                playerSelection.RemoveNullObjectsFromSelection();
+                WorldObject[] selectedObjects = playerSelection.GetSelectedObjects();
+                MovementController[] selectedUnits = new MovementController[selectedObjects.Length];
 
-                for (int i = 0; i < selectedObjects.Length; i++)
-                {
-                    selectedCharacters[i] = BigBookBasic.GetComponentFromGameObject<Character>(selectedObjects[i].gameObject);
-                }
-            }
 
-            Vector2 mousePosition = BigBookBasic.MousePosition();
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(mousePosition, .05f);
-            Collider2D col = BigBookBasic.PickProminentCollider(colliders);
-            if (col != null)
-            {
-                if (col.gameObject.CompareTag("Ground"))
+                if (selectedObjects[0].worldObjectType == ObjectType.Character)
                 {
-                    MoveToPosition(mousePosition, selectedCharacters);
+                    for (int i = 0; i < selectedObjects.Length; i++)
+                    {
+                        selectedUnits[i] = BigBookBasic.GetComponentFromGameObject<MovementController>(selectedObjects[i].gameObject);
+                    }
                 }
-                else if (col.gameObject.CompareTag("Water"))
-                {
 
-                }
-                else if (col.gameObject.CompareTag("Resource"))
+                Vector2 mousePosition = BigBookBasic.MousePosition();
+                Collider2D[] colliders = Physics2D.OverlapCircleAll(mousePosition, .05f);
+                Collider2D col = BigBookBasic.PickProminentCollider(colliders);
+                if (col != null)
                 {
-                    MoveToObject(col.gameObject, selectedCharacters);
-                    //ook iets meegeven aan alle betrokken characters zodat ze ook iets gaan doen met die resource
-                }
-                else if (col.gameObject.CompareTag("Character"))
-                {
-                    MoveToObject(col.gameObject, selectedCharacters);
+                    if (col.gameObject.CompareTag("Ground"))
+                    {
+                        MoveToPosition(mousePosition, selectedUnits);
+                    }
+                    else if (col.gameObject.CompareTag("Water"))
+                    {
 
-                }
-                else if (col.gameObject.CompareTag("Building"))
-                {
-                    MoveToObject(col.gameObject, selectedCharacters);
+                    }
+                    else if (col.gameObject.CompareTag("Resource"))
+                    {
+                        MoveToObject(col.gameObject, selectedUnits);
+                        //ook iets meegeven aan alle betrokken Units zodat ze ook iets gaan doen met die resource
+                    }
+                    else if (col.gameObject.CompareTag("Character"))
+                    {
+                        MoveToObject(col.gameObject, selectedUnits);
 
+                    }
+                    else if (col.gameObject.CompareTag("Building"))
+                    {
+                        MoveToObject(col.gameObject, selectedUnits);
+
+                    }
                 }
             }
         }
     }
 
-
-    private void MoveToPosition(Vector2 position, Character[] characters)
+    private void MoveToPosition(Vector2 position, MovementController[] units)
     {
-        Vector2[] destinations = Positioning.GetUnitGroupDestinations(position, characters.Length, .5f);
-        for (int i = 0; i < characters.Length; i++)
+        Vector2[] destinations = Positioning.GetUnitGroupDestinations(position, units.Length, .5f);
+        for (int i = 0; i < units.Length; i++)
         {
-            characters[i].MoveToGround(destinations[i]);
+            units[i].MoveToGround(destinations[i]);
         }
     }
 
-    public void MoveToObject(GameObject target, Character[] characters)
+    public void MoveToObject(GameObject target, MovementController[] units)
     {
         if (target.TryGetComponent(out WorldObject worldObject))
         {
-            Character[] possibleCharacters = SkipImpossible(worldObject, characters);  // om characters die geen interactie kunnen hebben met het object uit te sluiten.
-            Vector2[] positions = Positioning.GetCurrentPositions(possibleCharacters); // voor als ze niet kunnen verplaatsen (geen ruimte)
-            Vector2[] destinations = Positioning.GetUnitGroupDestinationsAroundWorldObject(worldObject, positions, possibleCharacters); // bepalen van positie rond object
-            SetTarget(worldObject, possibleCharacters, destinations); // naar opject verplaatsen en AI instellen voor interactie
+            MovementController[] possibleUnits = SkipImpossible(worldObject, units);  // om characters die geen interactie kunnen hebben met het object uit te sluiten.
+            Vector2[] positions = Positioning.GetCurrentPositions(possibleUnits); // voor als ze niet kunnen verplaatsen (geen ruimte)
+            Vector2[] destinations = Positioning.GetUnitGroupDestinationsAroundWorldObject(worldObject, positions, possibleUnits); // bepalen van positie rond object
+            SetTarget(worldObject, possibleUnits, destinations); // naar opject verplaatsen en AI instellen voor interactie
         }
         else
         {
-            Vector2[] positions = Positioning.GetCurrentPositions(characters);
-            for (int i = 0; i < characters.Length; i++)
+            Vector2[] positions = Positioning.GetCurrentPositions(units);
+            for (int i = 0; i < units.Length; i++)
             {
-                characters[i].MoveToPosition(positions[i]);
-                characters[i].actualTarget = null;
+                units[i].MoveToPosition(positions[i]);
+                units[i].ac.actualTarget = null;
             }
         }
     }
 
-    private Character[] SkipImpossible(WorldObject worldObject, Character[] characters)
+    private MovementController[] SkipImpossible(WorldObject worldObject, MovementController[] units)
     {
-        List<Character> possibleCharacters = new List<Character>();
+        List<MovementController> possibleUnits = new List<MovementController>();
+
+        units = OnlyOwnObjects<MovementController>(units).ToArray(); 
 
         switch (worldObject.worldObjectType)
         {
             case ObjectType.Building:
-                return characters;
+                return units;
             case ObjectType.Character:
-                return characters;
+                return units;
             case ObjectType.Resource:
                 {
                     //alleen units die uberhaupt resources kunnen dragen kunnen interactie met resources hebben.
-                    for (int c = 0; c < characters.Length; c++)
+                    for (int u = 0; u < units.Length; u++)
                     {
-                        if (characters[c].maxResourceAmount > 0)
-                            possibleCharacters.Add(characters[c]);
+                        WorldObject unitWo = units[u].GetComponent<WorldObject>();
+                        if (unitWo != null)
+                        {
+                            if (unitWo.player == player)
+                            {
+                                GatherController gather = units[u].GetComponent<GatherController>();
+                                if (gather != null)
+                                {
+                                    if (gather.maxResourceAmount > 0)
+                                        possibleUnits.Add(units[u]);
+                                }
+                            }
+                        }
                     }
                     break;
                 }
         }
-        return possibleCharacters.ToArray();
-
+        return possibleUnits.ToArray();
     }
 
-    private void SetTarget(WorldObject worldObject, Character[] characters, Vector2[] positions)
+    private List<T> OnlyOwnObjects<T>(T[] inputList) where T:MonoBehaviour
+    {
+        List<T> outputList = new List<T>();
+        for (int u = 0; u < inputList.Length; u++)
+        {
+            WorldObject unitWo = inputList[u].GetComponent<WorldObject>();
+            if (unitWo != null)
+            {
+                if (unitWo.player == player)
+                {
+                    outputList.Add(inputList[u]);
+                }
+            }
+        }
+        return outputList;
+    }
+
+    private void SetTarget(WorldObject worldObject, MovementController[] units, Vector2[] positions)
     {
         switch (worldObject.worldObjectType)
         {
             case ObjectType.Building:
-                for (int i = 0; i < characters.Length; i++)
+                for (int i = 0; i < units.Length; i++)
                 {
-                    //characters[i].DeliverResource(worldObject, positions[i]);
-                    characters[i].MoveToWorldObject(worldObject, positions[i], true);
+                    units[i].MoveToWorldObject(worldObject, positions[i], true);
                 }
                 break;
             case ObjectType.Character:
-                for (int i = 0; i < characters.Length; i++)
+                for (int i = 0; i < units.Length; i++)
                 {
-                    characters[i].animator.SetBool("Gathering", false);
-                    //characters[i].actualTarget = worldObject;
-                    characters[i].MoveToWorldObject(worldObject, positions[i], true);
+                    if (units[i].ac.animator!=null)
+                        units[i].ac.animator.SetBool("Gathering", false);
+                    units[i].MoveToWorldObject(worldObject, positions[i], true);
                 }
                 break;
             case ObjectType.Resource:
                 {
-                    for (int i = 0; i < characters.Length; i++)
+                    Resource resource = BigBookBasic.GetComponentFromGameObject<Resource>(worldObject.gameObject);
+                    if (resource != null)
                     {
-                        characters[i].animator.SetBool("IsGathering", true);
-                        //characters[i].GatherResource(worldObject, positions[i]);
-                        characters[i].MoveToWorldObject(worldObject, positions[i], true, true);
+                        for (int i = 0; i < units.Length; i++)
+                        {
+                            if (units[i].ac.animator != null)
+                            {
+                                units[i].ac.animator.SetBool("IsGathering", true);
+                                if (resource.available)
+                                    units[i].ac.animator.SetBool("IsAttacking", false);
+                                else
+                                    units[i].ac.animator.SetBool("IsAttacking", true);
+                            }
+                            units[i].MoveToWorldObject(worldObject, positions[i], true, true);
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("geen resource: " + worldObject.worldObjectName);
                     }
                     break;
                 }

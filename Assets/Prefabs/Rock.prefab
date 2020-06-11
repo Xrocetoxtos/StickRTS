@@ -128,8 +128,11 @@ MonoBehaviour:
   worldObjectName: Rock
   worldObjectDescription: A hard thing
   worldObjectSprite: {fileID: 21300000, guid: fe90748d7f39e9845b2be946eac65bec, type: 3}
+  aIController: {fileID: 0}
+  movement: {fileID: 0}
   worldObjectSelectionVisual: {fileID: 7810522808419359775}
   maxHealth: 10
+  deadSprite: {fileID: 0}
   allWorldObjectActions: []
   allowedWorldObjectActions: []
   slots:
@@ -151,8 +154,12 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   slotDistanceFromObject: 0.72
+  killAnimation: 5
   resourceType: 4
   resourceAmount: 100
+  maxResourceAmount: 100
+  available: 1
+  gatherAnimation: 3
 --- !u!58 &1635202794413063428
 CircleCollider2D:
   m_ObjectHideFlags: 0

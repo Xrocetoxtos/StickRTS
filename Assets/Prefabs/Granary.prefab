@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6216117564795739431}
   - component: {fileID: 9119222039621905283}
   - component: {fileID: 989545788478241015}
-  - component: {fileID: -5351832671655702346}
   - component: {fileID: 4450637908881253244}
   m_Layer: 13
   m_Name: Granary
@@ -111,46 +110,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.32, y: 0.32}
   m_EdgeRadius: 0
---- !u!114 &-5351832671655702346
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5436621704592208832}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae08e39d2b375c842929c0d62bf0641a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  worldObjectType: 2
-  player: {fileID: 0}
-  worldObjectName: Granary
-  worldObjectDescription: Place to store food.
-  worldObjectSprite: {fileID: 21300000, guid: e273bec60445b994d8d48859256f5368, type: 3}
-  worldObjectSelectionVisual: {fileID: 9180561091635749011}
-  maxHealth: 10
-  allWorldObjectActions: []
-  allowedWorldObjectActions: []
-  slots:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  slotCharacters:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  slotDistanceFromObject: 0.72
 --- !u!114 &4450637908881253244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,8 +127,11 @@ MonoBehaviour:
   worldObjectName: Granary
   worldObjectDescription: Place to store food.
   worldObjectSprite: {fileID: 21300000, guid: e273bec60445b994d8d48859256f5368, type: 3}
+  aIController: {fileID: 0}
+  movement: {fileID: 0}
   worldObjectSelectionVisual: {fileID: 9180561091635749011}
   maxHealth: 10
+  deadSprite: {fileID: 0}
   allWorldObjectActions: []
   allowedWorldObjectActions: []
   slots:

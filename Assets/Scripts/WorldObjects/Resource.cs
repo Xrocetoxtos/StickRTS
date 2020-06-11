@@ -8,7 +8,9 @@ public class Resource : WorldObject
     public ResourceType resourceType;
     public float resourceAmount;
     public float maxResourceAmount = 100;
+    public bool available = false;
 
+    public CharacterAnimationState gatherAnimation = CharacterAnimationState.Pickup;
 
     protected override void Awake()
     {
@@ -17,25 +19,25 @@ public class Resource : WorldObject
         resourceAmount = maxResourceAmount;
     }
 
-    public void ExtractResource(float amount, Character character)
+    public void ExtractResource(float amount, GatherController gather)
     {
         if(resourceAmount<=0)
-            DestroyResource(character);
+            DestroyResource(gather);
 
         if (resourceAmount < amount)
             amount = resourceAmount;
 
-        if(character.hasResourceType==resourceType)
+        if(gather.hasResourceType==resourceType)
         {
-            if (character.hasResourceAmount+amount > character.maxResourceAmount)
-                amount = character.maxResourceAmount - character.hasResourceAmount;
+            if (gather.hasResourceAmount+amount > gather.maxResourceAmount)
+                amount = gather.maxResourceAmount - gather.hasResourceAmount;
             if (amount != 0)
             {
                 resourceAmount -= amount;
-                character.hasResourceAmount += amount;
+                gather.hasResourceAmount += amount;
                 if (resourceAmount <= .1f)
                 {
-                    character.hasResourceAmount += resourceAmount;
+                    gather.hasResourceAmount += resourceAmount;
                     resourceAmount -= resourceAmount;
                 }
             }
@@ -46,10 +48,10 @@ public class Resource : WorldObject
         }
         else
         {
-            if(character.canExtractResourceType.Contains(resourceType))
+            if(gather.canExtractResourceType.Contains(resourceType))
             {
-                character.hasResourceAmount = 0;
-                character.hasResourceType = resourceType;
+                gather.hasResourceAmount = 0;
+                gather.hasResourceType = resourceType;
             }
         }
     }
@@ -62,7 +64,14 @@ public class Resource : WorldObject
             return 0;
     }
 
-    private void DestroyResource(Character character)
+    protected override void Die()
+    {
+        base.Die();
+        available = true;
+    }
+
+
+    private void DestroyResource(GatherController gatherController)
     {
         //Grid bijwerken, want obstakel valt weg
         //destroy object

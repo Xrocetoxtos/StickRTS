@@ -8,12 +8,10 @@ public class GameManager : MonoBehaviour
     public Camera camera;
     public Player player;
     public Grid grid;
+    public Pathfinding pathfinding;
 
     [SerializeField] private LayerMask thingsMask;
     public LayerMask resourcesMask;
-
-    private float timer = 0f;
-    private float timerMax = .3f;
 
     public bool selectedPanelOpen = false;
 
@@ -45,24 +43,4 @@ public class GameManager : MonoBehaviour
         else
             GUIManager.instance.TooltipObject(col);
     }
-
-    private void LateUpdate()
-    {
-        if (timer >= timerMax)
-        {
-            timer -= timerMax;
-            //Vector2 mousePosition = BigBookBasic.MousePosition();
-            //Collider2D col = Physics2D.OverlapCircle(mousePosition, .01f, thingsMask);
-            //if (col != null)
-            //    GUIManager.instance.TooltipObject(col.gameObject);
-            //else
-            //    GUIManager.instance.TooltipObject(col);
-        }
-        else
-        {
-            timer += Time.deltaTime;
-        }
-    }
-
-
 }

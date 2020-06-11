@@ -40,16 +40,37 @@ public enum CharacterAITask
     Build
 }
 
+//public enum CharacterAnimationState
+//{
+//    Idle,
+//    WalkLR,
+//    WalkRL,
+//    WalkUD,
+//    WalkDU,
+//    PickUp,
+//    Mine,
+//    CutTree,
+//    Fight
+//}
+
 public enum CharacterAnimationState
 {
     Idle,
-    WalkLR,
-    WalkRL,
-    WalkUD,
-    WalkDU,
-    PickUp,
+    Walk,
+    Pickup,
     Mine,
-    CutTree
+    CutTree,
+    FightStab,
+    FightSwing,
+    FightShoot
+}
+
+public enum CharacterAnimationDirection
+{
+    Left,
+    Right,
+    Up,
+    Down
 }
 
 public enum ColliderValue

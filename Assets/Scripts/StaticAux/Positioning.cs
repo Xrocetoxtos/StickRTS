@@ -32,10 +32,10 @@ public static class Positioning
         return destinations;
     }
 
-    public static Vector2[] GetUnitGroupDestinationsAroundWorldObject(WorldObject worldObject, Vector2[] currentPositions, WorldObject[] worldObjects)
+    public static Vector2[] GetUnitGroupDestinationsAroundWorldObject(WorldObject worldObject, Vector2[] currentPositions, MovementController[] movements)
     {
         // kijken welke slots rond de resource walkable zijn.
-        Dictionary<Transform, WorldObject> slots = new Dictionary<Transform, WorldObject>();
+        Dictionary<Transform, MovementController> slots = new Dictionary<Transform, MovementController>();
         for (int s = 0; s < worldObject.slots.Length; s++) 
         {
             if (PointIsWalkable(worldObject.slots[s].position))
@@ -46,11 +46,11 @@ public static class Positioning
             return currentPositions;
 
         // nu per character een vrije slot zoeken.
-        for (int x = 0; x < worldObjects.Length; x++)
+        for (int x = 0; x < movements.Length; x++)
         {
             Transform slot = worldObject.transform;
             float distance = 99999;
-            foreach (KeyValuePair<Transform,WorldObject> entry in slots)
+            foreach (KeyValuePair<Transform,MovementController> entry in slots)
             {
                 if(entry.Value==null)
                 {
@@ -64,7 +64,7 @@ public static class Positioning
             }
             if (slot != worldObject.transform)
             {
-                slots[slot] = worldObjects[x];
+                slots[slot] = movements[x];
                 currentPositions[x] = slot.position;
             }
         }
@@ -77,12 +77,12 @@ public static class Positioning
         return node.walkable;
     }
 
-    public static Vector2[] GetCurrentPositions(Character[] characters)
+    public static Vector2[] GetCurrentPositions(MovementController[] units)
     {
-        Vector2[] positions = new Vector2[characters.Length];
-        for (int i = 0; i < characters.Length; i++)
+        Vector2[] positions = new Vector2[units.Length];
+        for (int i = 0; i < units.Length; i++)
         {
-            positions[i] = characters[i].transform.position;
+            positions[i] = units[i].transform.position;
         }
         return positions;
     }

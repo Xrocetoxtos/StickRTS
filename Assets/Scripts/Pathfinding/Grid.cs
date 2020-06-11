@@ -165,6 +165,11 @@ public class Grid : MonoBehaviour
         return grid[x, y];
     }
 
+    public bool PositionIsInGrid(Vector2 position)
+    {
+        return (Physics2D.OverlapCircle(position, nodeRadius));
+    }
+
     void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, gridWorldSize.y, 1));

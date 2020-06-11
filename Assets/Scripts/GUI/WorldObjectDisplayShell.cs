@@ -19,7 +19,18 @@ public class WorldObjectDisplayShell : MonoBehaviour
                     SetDisplay(characterDisplay, _worldObject);
                     break;
                 case ObjectType.Resource:
-                    SetDisplay(resourceDisplay, _worldObject);
+                    _worldObject.TryGetComponent<Resource>(out Resource resource);
+                    if (resource)
+                    {
+                        if (resource.available)
+                            SetDisplay(resourceDisplay, _worldObject);
+                        else
+                            SetDisplay(characterDisplay, _worldObject);
+                    }
+                    else
+                    {
+                        SetDisplay(null, null);
+                    }
                     break;
                 case ObjectType.Building:
                     SetDisplay(buildingdisplay, _worldObject);

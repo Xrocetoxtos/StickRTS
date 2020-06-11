@@ -6,40 +6,37 @@ using UnityEngine;
 public class GatherState : BaseFSM
 {
     private Resource resource;
+    private GatherController gather;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
         TimeTickSystem.OnTick += TimeTickSystem_OnTick;
-
-        resource = character.actualTarget.GetComponent<Resource>();
-        switch (resource.resourceType)
+        
+        gather = unit.gather;
+        resource = aIController.actualTarget.GetComponent<Resource>();
+        if (resource)
         {
-            case ResourceType.Food:
-                break;
-            case ResourceType.Wood:
-                break;
-            case ResourceType.Gold:
-                break;
-            case ResourceType.Stone:
-                Debug.Log("mine");
-                characterAnimator.ChangeAnimation(CharacterAnimationState.Mine);
-                break;
-            case ResourceType.None:
-                break;
+            Vector2 direction = BigBookBasic.GetDirectionVector2(resource.transform.position, unitObject.transform.position);
+            characterAnimator.GetAnimationFromVector2(direction.x, direction.y, resource.gatherAnimation);
+        }
+        else
+        {
+            animator.SetBool("HasArrived", true);
+            animator.SetBool("IsGathering", false);
         }
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        base.OnStateEnter(animator, stateInfo, layerIndex);
-        if (character.hasResourceAmount >= character.maxResourceAmount || (resource.resourceAmount <= 0 && character.hasResourceAmount > 0))
+        base.OnStateUpdate(animator, stateInfo, layerIndex);
+        if (gather.hasResourceAmount >= gather.maxResourceAmount || (resource.resourceAmount <= 0 && gather.hasResourceAmount > 0))
         {
             anim.SetBool("HasResources", true);
-            character.FindStorage();
+            gather.FindStorage();
         }
-        else if (resource.resourceAmount <= 0 && character.hasResourceAmount <= 0)
-            character.FindNewResource();
+        else if (resource.resourceAmount <= 0 && gather.hasResourceAmount <= 0)
+            gather.FindNewResource();
     }
 
 
@@ -47,14 +44,14 @@ public class GatherState : BaseFSM
     {
         Debug.Log("gather tick");
         //aanroepen van gather mechanic
-        resource.ExtractResource(character.resourceExtractSpeed * Time.deltaTime * 5, character);
+        resource.ExtractResource(unit.gather.resourceExtractSpeed/5, gather);  //time.deltatime losgelaten hier, want op basis van tick per seconde.
 
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        base.OnStateEnter(animator, stateInfo, layerIndex);
-        character.returnTarget = resource;
+        base.OnStateExit(animator, stateInfo, layerIndex);
+        aIController.returnTarget = resource;
         TimeTickSystem.OnTick -= TimeTickSystem_OnTick;
     }
 }

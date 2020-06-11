@@ -4,29 +4,32 @@ using UnityEngine;
 
 public class DeliverState : BaseFSM
 {
-    //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    base.OnStateEnter(animator, stateInfo, layerIndex);
+    private GatherController gather;
+    private MovementController movement;
 
-    //}
-
-    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
+        gather = unit.gather;
+        movement = unit.movement;
+        TimeTickSystem.OnTick += TimeTickSystem_OnTick;
+    }
+    private void TimeTickSystem_OnTick(object sender, TimeTickSystem.OnTickEventArgs e)
+    { 
         // resources achterlaten bij building en dan weer naar returnTarget toe.
-        character.player.AddResource(character.hasResourceType, (int)character.hasResourceAmount);
-        character.hasResourceAmount = 0;
+        unit.player.AddResource(gather.hasResourceType, (int)gather.hasResourceAmount);
+        gather.hasResourceAmount = 0;
 
-        animator.SetBool("HasResources", false);
-        animator.SetBool("HasArrived", false);
+        unit.animator.SetBool("HasResources", false);
+        unit.animator.SetBool("HasArrived", false);
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        base.OnStateEnter(animator, stateInfo, layerIndex);
-        Character[] thisCharacter = new Character[1];
-        thisCharacter[0] = character;
-        character.player.playerController.MoveToObject(character.returnTarget.gameObject, thisCharacter);
+        base.OnStateExit(animator, stateInfo, layerIndex);
+        MovementController[] thisUnit = BigBookBasic.ThisUnitToArray(movement);
+        unit.player.playerController.MoveToObject(aIController.returnTarget.gameObject, thisUnit);
+        TimeTickSystem.OnTick -= TimeTickSystem_OnTick;
 
     }
 }
